@@ -1,4 +1,5 @@
 import pygame
+import re
 
 from pygame.draw import *
 from random import randint
@@ -126,14 +127,30 @@ def check_square(new_tuple_square, event):
         check = False
     return check
 
+
+def sort(stroka):
+'''
+Функция ожидает массив из строк, береёт каждую строку, находит её численную часть и сортирует "пузырьком"
+'''
+    for i in range(len(stroka) - 1):
+        si = stroka[i]
+        s2 = (re.sub(r'\D', '', si)) # выделяет численную часть строки
+        s2_1=int(s2)
+                 
+        for j in range (len(stroka) - i):
+            sj = stroka[j]
+            s1=(re.sub(r'\D', '', sj))
+            s1_1=int(s1)
+            if (s2_1 > s1_1) :
+                stroka[i],stroka[j] = stroka[j],stroka[i] 
+        
+
 '''
 ввожу имя игрока
 открываю файл и заполняю две колоны таблицы 'Игрок' и 'Счёт' 
 '''
+
 name=input()
-balls = open('bools.txt', 'w')
-balls.write('Игрок    Счёт')
-balls.close
 
 screen = pygame.display.set_mode((X_LENGTH, Y_WIDTH))
 pygame.display.update()
@@ -143,6 +160,9 @@ finished = False
 '''создаю массив функций шаров с их параметрами, тоесть создаю массив из кортежей параметров каждого шара(balls_list) и квадрата(squares_list)'''
 balls_list = [] 
 squares_list = []
+score_list=[]
+massiv=[]
+k=0
 
 score = 0 # счёт(количество очков)
 time_counter = 0 # счётчик времени
@@ -199,16 +219,32 @@ while not finished:
     if time_counter < 100*FPS: # if нужен, чтобы надпись держалась некоторое время
         screen.blit(pygame.font.Font(None, FONT_SIZE).render('Catch the ball (and the square)!', 1, WHITE),
             (X_LENGTH/2 - FONT_SIZE*5, FONT_SIZE)) # FONT_SIZE это размер шрифта
-
-    '''Заполняю файл именами игроков и их результатом(количеством очков) '''
-    balls = open('bools.txt', 'w')
-    s=name+"    " + str(score) # name - имя игрока, которые мы вводим
-    balls.write(s)
-    balls.close
-
+    
     pygame.display.update()
+    
 
 
+
+
+'''Заполняю файл именами игроков и их результатом(количеством очков) '''
+balls = open('bools_prob.txt', 'a')
+s=name+"    " + str(score) # name - имя игрока, которые мы вводим
+balls.write(s+'\n')
+balls.close()
+
+'''Читаю запоненный файл и записываю строки файла в массив stroka'''
+balls = open('bools_prob.txt','r')
+stroka=balls.readlines()
+balls.close
+
+'''Сортирую таблицу по убыванию'''
+sort(stroka,k) 
+
+'''Вывожу в конечный файл итоговую таблицу '''
+balls = open('bools.txt','w')
+for i in range(len(stroka)):
+    balls.write(stroka[i]+'\n')
+balls.close()
 
 
 pygame.quit()
