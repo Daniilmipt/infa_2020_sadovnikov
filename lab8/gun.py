@@ -101,7 +101,6 @@ class Gun():
         Args:
         x - положение пушки по горизонтале
         y - положение пушки по вертикале
-
         """
         self.f2_power = 10
         self.f2_on = 0
@@ -115,7 +114,8 @@ class Gun():
 
 
     def fire2_end(self, event):
-        """Выстрел мячом.
+        """
+        Выстрел мячом.
 
         Происходит при отпускании кнопки мыши.
         Начальные значения компонент скорости мяча vx и vy зависят от положения мыши.
@@ -226,21 +226,13 @@ class Target():
 
            Удаляем цель, если попадание произошло.
         """
+        self.live = 0
         canv.delete(self.id)
         
 
-"""Присваиваем переменным значение класса и определяем массив из этих элементов """
-g1 = Gun()
-n = 4
-t = [] 
-for i in range(n):
-    t.append(Target())
-
-
 def new_game(event=''):
     """Функция отвечающая за работу игры"""
-
-    global Gun, screen1, balls
+    global screen1, balls
     score = 0 # Количество очков за попадания
     for i in range(n):
         t[i].new_target()
@@ -249,15 +241,12 @@ def new_game(event=''):
     canv.bind('<Button-1>', g1.fire2_start)
     canv.bind('<ButtonRelease-1>', g1.fire2_end)
     canv.bind('<Motion>', g1.targetting)
-
-
     i = 0
     while t[i].live or balls:
         for b in balls:
             b.move()
             for i in range(len(t)):
                 if b.hittest(t[i]) and t[i].live:
-                    t[i].live = 0
                     t[i].hit()
                     t[i] = Target()
                     canv.bind('<Button-1>')
@@ -274,5 +263,11 @@ def new_game(event=''):
             t[i].move_target()
 
 
+# Присваиваем переменным значение класса и определяем массив из этих элементов 
+g1 = Gun()
+n = 4
+t = [] 
+for i in range(n):
+    t.append(Target())
 new_game()
 mainlop()
